@@ -5,27 +5,32 @@ A TCP protocol I made to build a chat program.
 
 ## Notes
 * The format of sending any request is the method a space and then all payloads seperated with spaces.
-* Whenever sending payload, it is always going to be sent encoded with Base64 to allow all characters in payload, except for error messages.
+* Whenever sending payload, it is always going to be sent encoded with Base64 to allow all characters in payload, except for error messages, and permission levels.
 * The methods and modes are uppercase to show they are commands while talking about it in chat.
 * Permission level can range between 1 and 4
 * The mode FROM_TELNET does not send any response back to the server as if it is in telnet mode, it is meant to be read by humans.
+* For the methods CHANGE_PERM_LEVEL and CREATE_ACCOUNT, the permissions required is 1 above the permission level you want to set. For example, if you are at permission level 3, you can set people's permissions levels who are less than 3. However, you cannot set someone's permission level if they are 3+.
 
 ## Methods, Modes, and Errors that are passed using the protocol
 
 ### Methods
-| Method and Payload              | Description                                                                       | For clients, servers, or both | Permissions required |
-|---------------------------------|:---------------------------------------------------------------------------------:|:------------------------------|:---------------------|
-| SEND_TO_ID                      | Tells the client to send the ID given from the session in the TO mode.            | Client                        | 1                    |
-| READY                           | Tells the other side they are ready to accept commands, always used on connect.   | Server                        | 1                    |
-| CLOSE                           | Close connection.                                                                 | Both                          | 1                    |
-| LOGIN (username) (password)     | Making a login request with username and password to the server.                  | Client                        | 1                    |
-| GET_ID                          | Get the session ID.                                                               | Client                        | 1                    |
-| ECHO_FROM (anything or nothing) | Sends the same message back through a FROM session.                               | Both                          | 1                    |
-| SEND (username) (message)       | Sends a message to another user                                                   | Client                        | 1                    |
-| RECV (username) (message)       | Recieve a message from another user using the SEND method                         | Server                        | 1                    |
-| CONSOLE_LOG (message)           | Tells the server to log a message to the server logs.                             | Client                        | 3                    |
-| ERROR (error message)           | Sends to the other side an error message, usually in response to another request. | Both                          | 1                    |
-| ACK                             | Acknowledging a request, usually means a request succeeded.                       | Both                          | 1                    |
+| Method and Payload                              | Description                                                                       | For clients, servers, or both | Permissions required   |
+|-------------------------------------------------|:---------------------------------------------------------------------------------:|:------------------------------|:-----------------------|
+| SEND_TO_ID                                      | Tells the client to send the ID given from the session in the TO mode.            | Client                        | 1                      |
+| READY                                           | Tells the other side they are ready to accept commands, always used on connect.   | Server                        | 1                      |
+| CLOSE                                           | Close connection.                                                                 | Both                          | 1                      |
+| LOGIN (username) (password)                     | Making a login request with username and password to the server.                  | Client                        | 1                      |
+| CREATE_ACCOUNT (username) (password)            | Create an account                                                                 | Client                        | 2 or more (read notes) |
+| CHANGE_PERM_LEVEL (username) (permission level) | Change permission level on an account                                             | Client                        | 2 or more (read notes) |
+| DELETE_ACCOUNT (username)                       | Delete an account                                                                 | Client                        | 3                      |
+| CHANGE_PASSWORD (current password) (password)   | Changes the password of the account you are logged into                           | Client                        | 1                      |
+| GET_ID                                          | Get the session ID.                                                               | Client                        | 1                      |
+| ECHO_FROM (anything or nothing)                 | Sends the same message back through a FROM session.                               | Both                          | 1                      |
+| SEND (username) (message)                       | Sends a message to another user                                                   | Client                        | 1                      |
+| RECV (username) (message)                       | Recieve a message from another user using the SEND method                         | Server                        | 1                      |
+| CONSOLE_LOG (message)                           | Tells the server to log a message to the server logs.                             | Client                        | 3                      |
+| ERROR (error message)                           | Sends to the other side an error message, usually in response to another request. | Both                          | 1                      |
+| ACK                                             | Acknowledging a request, usually means a request succeeded.                       | Both                          | 1                      |
 
 ### Modes
 | Mode        | Description                            |
@@ -44,3 +49,4 @@ A TCP protocol I made to build a chat program.
 | InvalidCommand   | You sent an invalid or non-existant command                                 | Both                              |
 | PermissionDenied | Your permission level is below the required level to issue the command      | Clients                           |
 | NoFROMSession    | You sent a command that required a FROM session attached when there is none | Clients                           |
+| AccountNotFound  | The server could not find the account you specified in a command            | Clients
