@@ -10,6 +10,9 @@ A TCP protocol I made to build a chat program.
 * Permission level can range between 1 and 4
 * The mode FROM_TELNET does not send any response back to the server as if it is in telnet mode, it is meant to be read by humans.
 * For the methods CHANGE_PERM_LEVEL and CREATE_ACCOUNT, the permissions required is 1 above the permission level you want to set. For example, if you are at permission level 3, you can set people's permissions levels who are less than 3. However, you cannot set someone's permission level if they are 3+.
+* GC Stands for Group Chat
+* Group chats have similar qualities to accounts in that you can use SEND and RECV methods and pass the GC name as the username. GCs do not have a permission level like accounts, and you can't login as one.
+* When you use the CREATE_GC method, whatever account you are logged into is automatically added to the group.
 
 ## Methods, Modes, and Errors that are passed using the protocol
 
@@ -28,6 +31,11 @@ A TCP protocol I made to build a chat program.
 | ECHO_FROM (anything or nothing)                         | Sends the same message back through a FROM session.                               | Both                          | 1                      |
 | SEND (username) (message)                               | Sends a message to another user                                                   | Client                        | 1                      |
 | RECV (username) (message)                               | Recieve a message from another user using the SEND method                         | Server                        | None                   |
+| CREATE_GC (name)                                        | Creates a group chat                                                              | Client                        | 2                      |
+| DELETE_GC (name)                                        | Deletes a group chat                                                              | Client                        | 3                      |
+| INVITE_TO_GC (username)                                 | Invite someone to a group chat                                                    | Client                        | 2                      |
+| GC_INVITE_RECV (gc name)                                | Indication that you got an invite to a group chat                                 | Server                        | None                   |
+>>>>>>> Stashed changes
 | CONSOLE_LOG (message)                                   | Tells the server to log a message to the server logs.                             | Client                        | 3                      |
 | ERROR (error message)                                   | Sends to the other side an error message, usually in response to another request. | Both                          | 1                      |
 | ACK                                                     | Acknowledging a request, usually means a request succeeded.                       | Both                          | 1                      |
