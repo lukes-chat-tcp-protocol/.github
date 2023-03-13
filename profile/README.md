@@ -31,11 +31,13 @@ A TCP protocol I made to build a chat program.
 | ECHO_FROM (anything or nothing)                         | Sends the same message back through a FROM session.                               | Both                          | 1                      |
 | SEND (username) (message)                               | Sends a message to another user                                                   | Client                        | 1                      |
 | RECV (username) (message)                               | Recieve a message from another user using the SEND method                         | Server                        | None                   |
+| RECV_GC (gc name) (username) (message)                  | Recieve a message from a member of a group chat using the SEND method             | Server                        | None                   |
 | CREATE_GC (name)                                        | Creates a group chat                                                              | Client                        | 2                      |
 | DELETE_GC (name)                                        | Deletes a group chat                                                              | Client                        | 3                      |
-| INVITE_TO_GC (username)                                 | Invite someone to a group chat                                                    | Client                        | 2                      |
+| INVITE_TO_GC (gc name) (username)                       | Invite someone to a group chat                                                    | Client                        | 2                      |
 | GC_INVITE_RECV (gc name)                                | Indication that you got an invite to a group chat                                 | Server                        | None                   |
->>>>>>> Stashed changes
+| ACCEPT_GC_INVITE (gc name)                              | Accept an invitation to a group chat                                              | Client                        | 1
+| REMOVE_FROM_GC (gc name) (username)                     | Removes someone from a group chat                                                 | Client                        | 3                      |
 | CONSOLE_LOG (message)                                   | Tells the server to log a message to the server logs.                             | Client                        | 3                      |
 | ERROR (error message)                                   | Sends to the other side an error message, usually in response to another request. | Both                          | 1                      |
 | ACK                                                     | Acknowledging a request, usually means a request succeeded.                       | Both                          | 1                      |
@@ -49,12 +51,16 @@ A TCP protocol I made to build a chat program.
 | FROM_TELNET | Sending from the server in telnet mode |
 
 ### Error Messages
-| Error            | Description                                                                 | Sent to clients, servers, or both |
-|------------------|:---------------------------------------------------------------------------:|:----------------------------------|
-| LoginRequired    | You need to login to run this command                                       | Clients                           |
-| LoginFailed      | You sent an incorrect username or password                                  | Clients                           |
-| InvalidB64Code   | You sent invalid base64 code or undecodable strings                         | Both                              |
-| InvalidCommand   | You sent an invalid or non-existant command                                 | Both                              |
-| PermissionDenied | Your permission level is below the required level to issue the command      | Clients                           |
-| NoFROMSession    | You sent a command that required a FROM session attached when there is none | Clients                           |
-| AccountNotFound  | The server could not find the account you specified in a command            | Clients
+| Error                 | Description                                                                 | Sent to clients, servers, or both |
+|-----------------------|:---------------------------------------------------------------------------:|:----------------------------------|
+| LoginRequired         | You need to login to run this command                                       | Clients                           |
+| LoginFailed           | You sent an incorrect username or password                                  | Clients                           |
+| InvalidB64Code        | You sent invalid base64 code or undecodable strings                         | Both                              |
+| InvalidCommand        | You sent an invalid or non-existant command                                 | Both                              |
+| PermissionDenied      | Your permission level is below the required level to issue the command      | Clients                           |
+| NoFROMSession         | You sent a command that required a FROM session attached when there is none | Clients                           |
+| AccountNotFound       | The server could not find the account/gc you specified in a command         | Clients                           |
+| AccountExists         | You tried to make an account/gc that already existed                        | Clients                           |
+| AccountAlreadyInvited | You tried to invite someone to a group chat who was already invited         | Clients                           |
+| NotInvited            | You tried to accept an invite that you didn't get                           | Clients                           |
+| NotAMember            | You tried to run an operation on a GC involving a user that wasnt in the GC | Clients                           |
